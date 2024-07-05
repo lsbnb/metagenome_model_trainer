@@ -16,5 +16,5 @@ There are two functions in Metagenome Model Trainer script, (1.) Training built-
 
 #### 2. Training sample data:
 ```
-  python metagenome_model_trainer.py sample_data/ccs_sample.csv
+  python metagenome_model_trainer.py sample_data/sample_pattern1.csv
 ```
