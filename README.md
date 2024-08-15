@@ -18,3 +18,20 @@ There are two functions in Metagenome Model Trainer script, (1.) Training built-
 ```
   python metagenome_model_trainer.py sample_data/sample_pattern1.csv
 ```
+
+## Result:
+
+####Pattern 1:
+Accuracy: 0.64	Specificity: 0.56	MCC: 0.30	F1: 0.58
+
+####Pattern 2:
+Accuracy: 0.92	Specificity: 0.94	MCC: 0.85	F1: 0.92
+
+####Pattern 3:
+Accuracy: 0.94	Specificity: 0.98	MCC: 0.89	F1: 0.94
+
+####Pattern 4:
+Accuracy: 0.96	Specificity: 0.94	MCC: 0.92	F1: 0.95
+
+####Pattern 5:
+Accuracy: 0.93	Specificity: 0.94	MCC: 0.85	F1: 0.92
