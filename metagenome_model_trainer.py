@@ -7,6 +7,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn import ensemble, preprocessing, metrics
 from sklearn import datasets
 import sys
+import shap
 
 
 
@@ -15,6 +16,7 @@ if len(sys.argv) >= 2:
 	hbcd_deg_train_test = pd.read_csv(sys.argv[1])
 	hbcd_deg_X_test = hbcd_deg_train_test[hbcd_deg_train_test.columns[2:8227]].values
 	hbcd_deg_y_test = hbcd_deg_train_test[hbcd_deg_train_test.columns[1]].values
+	feature_list = hbcd_deg_train_test.columns[2:8228]
 
 	i = 0
 	acc_list = []
@@ -45,6 +47,59 @@ if len(sys.argv) >= 2:
 	T1_RM_f1_mean = statistics.fmean(f1_list)
 	print('Pattern training result:')
 	print('Accuracy: %.2f' % T1_RM_acc_mean +'\t'+'Specificity: %.2f' % T1_RM_sp_mean +'\t'+'MCC: %.2f' % T1_RM_mcc_mean +'\t'+'F1: %.2f' % T1_RM_f1_mean)
+
+	print('SHAP analysis...')
+	P_name_idx = sys.argv[1].find('sample_pattern')
+	if P_name_idx == -1:
+		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1, random_state=0)
+		forest = ensemble.RandomForestClassifier(n_estimators = 100, random_state=0)
+		explainer = shap.Explainer(forest)
+		shap_values = explainer.shap_values(test_X)
+		plt.clf()
+		plt.title('RandomForest SHAP analysis',fontsize=15,fontproperties="Times New Roman",weight='bold')
+		shap.summary_plot(shap_values[0], test_X, feature_names=feature_list, max_display=15)
+	else:
+		P_name = sys.argv[1].split('.')[0].split('pattern')[1]
+		if P_name == '1':
+			train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1, random_state=25)
+			forest = ensemble.RandomForestClassifier(n_estimators = 100, random_state=6)
+			explainer = shap.Explainer(forest)
+			shap_values = explainer.shap_values(test_X)
+			plt.clf()
+			plt.title('CCS Pattern 1 : RandomForest',fontsize=15,fontproperties="Times New Roman",weight='bold')
+			shap.summary_plot(shap_values[0], test_X, feature_names=feature_list, max_display=15)
+		elif P_name == '2':
+			train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1, random_state=47)
+			forest = ensemble.RandomForestClassifier(n_estimators = 100, random_state=21)
+			explainer = shap.Explainer(forest)
+			shap_values = explainer.shap_values(test_X)
+			plt.clf()
+			plt.title('CCS Pattern 2 : RandomForest',fontsize=15,fontproperties="Times New Roman",weight='bold')
+			shap.summary_plot(shap_values[0], test_X, feature_names=feature_list, max_display=15)
+		elif P_name == '3':
+			train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1, random_state=2)
+			forest = ensemble.RandomForestClassifier(n_estimators = 100, random_state=7)
+			explainer = shap.Explainer(forest)
+			shap_values = explainer.shap_values(test_X)
+			plt.clf()
+			plt.title('CCS Pattern 3 : RandomForest',fontsize=15,fontproperties="Times New Roman",weight='bold')
+			shap.summary_plot(shap_values[0], test_X, feature_names=feature_list, max_display=15)
+		elif P_name == '4':
+			train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1, random_state=1)
+			forest = ensemble.RandomForestClassifier(n_estimators = 100, random_state=16)
+			explainer = shap.Explainer(forest)
+			shap_values = explainer.shap_values(test_X)
+			plt.clf()
+			plt.title('CCS Pattern 4 : RandomForest',fontsize=15,fontproperties="Times New Roman",weight='bold')
+			shap.summary_plot(shap_values[0], test_X, feature_names=feature_list, max_display=15)
+		elif P_name == '5':
+			train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1, random_state=8)
+			forest = ensemble.RandomForestClassifier(n_estimators = 100, random_state=0)
+			explainer = shap.Explainer(forest)
+			shap_values = explainer.shap_values(test_X)
+			plt.clf()
+			plt.title('CCS Pattern 5 : RandomForest',fontsize=15,fontproperties="Times New Roman",weight='bold')
+			shap.summary_plot(shap_values[0], test_X, feature_names=feature_list, max_display=15)
 
 else:
 	print('If the script is interrupted...Please try again...')
