@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import statistics
 from sklearn.model_selection import train_test_split
+from sklearn.model_selection import KFold
 from sklearn.metrics import confusion_matrix
 from sklearn import ensemble, preprocessing, metrics
 from sklearn import datasets
@@ -24,23 +25,24 @@ if len(sys.argv) >= 2:
 	mcc_list = []
 	f1_list = []
 
-	while i < 300 :
-		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_test, hbcd_deg_y_test, test_size = 0.1)
+	while i < 30 :
+		kf = KFold(n_splits=10, shuffle=True)
 		i=i+1
-		forest = ensemble.RandomForestClassifier(n_estimators = 100)
-		forest_fit = forest.fit(train_X, train_y)
-		test_y_predicted = forest.predict(test_X)
-		cm1 = metrics.confusion_matrix(test_y, test_y_predicted)
-		T1_mcc=metrics.matthews_corrcoef(test_y, test_y_predicted)
-		T1_f1 = metrics.f1_score(test_y, test_y_predicted)
-		total1=sum(sum(cm1))
-		T1_accuracy=(cm1[0,0]+cm1[1,1])/total1
-		T1_specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
-		acc_list.append(T1_accuracy)
-		sp_list.append(T1_specificity)
-		mcc_list.append(T1_mcc)
-		f1_list.append(T1_f1)
-
+		for train_X_idx, test_X_idx in kf.split(hbcd_deg_X_test):
+			forest = ensemble.RandomForestClassifier(n_estimators = 100)
+			forest_fit = forest.fit(hbcd_deg_X_test[train_X_idx], hbcd_deg_y_test[train_X_idx])
+			test_y=hbcd_deg_y_test[test_X_idx]
+			G1_test_y_predicted = forest.predict(hbcd_deg_X_test[test_X_idx])
+			cm1 = metrics.confusion_matrix(test_y, G1_test_y_predicted)
+			mcc=metrics.matthews_corrcoef(test_y, G1_test_y_predicted)
+			f1 = metrics.f1_score(test_y, G1_test_y_predicted)
+			total1=sum(sum(cm1))
+			accuracy=(cm1[0,0]+cm1[1,1])/total1
+			specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
+			acc_list.append(accuracy)
+			sp_list.append(specificity)
+			mcc_list.append(mcc)
+			f1_list.append(f1)
 	T1_RM_acc_mean = statistics.fmean(acc_list)
 	T1_RM_sp_mean = statistics.fmean(sp_list)
 	T1_RM_mcc_mean = statistics.fmean(mcc_list)
@@ -136,22 +138,24 @@ else:
 	mcc_list = []
 	f1_list = []
 
-	while i < 300 :
+	while i < 30 :
+		kf = KFold(n_splits=10, shuffle=True)
 		i=i+1
-		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_g1, hbcd_deg_y_g1, test_size = 0.1)
-		forest = ensemble.RandomForestClassifier(n_estimators = 100)
-		forest_fit = forest.fit(train_X, train_y)
-		G1_valid_y_predicted = forest.predict(test_X)
-		cm1 = metrics.confusion_matrix(test_y, G1_valid_y_predicted)
-		G1_mcc=metrics.matthews_corrcoef(test_y, G1_valid_y_predicted)
-		G1_f1 = metrics.f1_score(test_y, G1_valid_y_predicted)
-		total1=sum(sum(cm1))
-		G1_accuracy=(cm1[0,0]+cm1[1,1])/total1
-		G1_specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
-		acc_list.append(G1_accuracy)
-		sp_list.append(G1_specificity)
-		mcc_list.append(G1_mcc)
-		f1_list.append(G1_f1)
+		for train_X_idx, test_X_idx in kf.split(hbcd_deg_X_g1):
+			forest = ensemble.RandomForestClassifier(n_estimators = 100)
+			forest_fit = forest.fit(hbcd_deg_X_g1[train_X_idx], hbcd_deg_y_g1[train_X_idx])
+			test_y=hbcd_deg_y_g1[test_X_idx]
+			G1_test_y_predicted = forest.predict(hbcd_deg_X_g1[test_X_idx])
+			cm1 = metrics.confusion_matrix(test_y, G1_test_y_predicted)
+			mcc=metrics.matthews_corrcoef(test_y, G1_test_y_predicted)
+			f1 = metrics.f1_score(test_y, G1_test_y_predicted)
+			total1=sum(sum(cm1))
+			accuracy=(cm1[0,0]+cm1[1,1])/total1
+			specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
+			acc_list.append(accuracy)
+			sp_list.append(specificity)
+			mcc_list.append(mcc)
+			f1_list.append(f1)
 	G1_RM_acc_mean = statistics.fmean(acc_list)
 	G1_RM_sp_mean = statistics.fmean(sp_list)
 	G1_RM_mcc_mean = statistics.fmean(mcc_list)
@@ -164,22 +168,24 @@ else:
 	mcc_list = []
 	f1_list = []
 
-	while i < 300 :
+	while i < 30 :
+		kf = KFold(n_splits=10, shuffle=True)
 		i=i+1
-		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_g2, hbcd_deg_y_g2, test_size = 0.1)
-		forest = ensemble.RandomForestClassifier(n_estimators = 100)
-		forest_fit = forest.fit(train_X, train_y)
-		G2_valid_y_predicted = forest.predict(test_X)
-		cm1 = metrics.confusion_matrix(test_y, G2_valid_y_predicted)
-		G2_mcc=metrics.matthews_corrcoef(test_y, G2_valid_y_predicted)
-		G2_f1 = metrics.f1_score(test_y, G2_valid_y_predicted)
-		total1=sum(sum(cm1))
-		G2_accuracy=(cm1[0,0]+cm1[1,1])/total1
-		G2_specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
-		acc_list.append(G2_accuracy)
-		sp_list.append(G2_specificity)
-		mcc_list.append(G2_mcc)
-		f1_list.append(G2_f1)
+		for train_X_idx, test_X_idx in kf.split(hbcd_deg_X_g2):
+			forest = ensemble.RandomForestClassifier(n_estimators = 100)
+			forest_fit = forest.fit(hbcd_deg_X_g2[train_X_idx], hbcd_deg_y_g2[train_X_idx])
+			test_y=hbcd_deg_y_g2[test_X_idx]
+			G2_test_y_predicted = forest.predict(hbcd_deg_X_g2[test_X_idx])
+			cm1 = metrics.confusion_matrix(test_y, G2_test_y_predicted)
+			mcc=metrics.matthews_corrcoef(test_y, G2_test_y_predicted)
+			f1 = metrics.f1_score(test_y, G2_test_y_predicted)
+			total1=sum(sum(cm1))
+			accuracy=(cm1[0,0]+cm1[1,1])/total1
+			specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
+			acc_list.append(accuracy)
+			sp_list.append(specificity)
+			mcc_list.append(mcc)
+			f1_list.append(f1)
 	G2_RM_acc_mean = statistics.fmean(acc_list)
 	G2_RM_sp_mean = statistics.fmean(sp_list)
 	G2_RM_mcc_mean = statistics.fmean(mcc_list)
@@ -192,22 +198,24 @@ else:
 	mcc_list = []
 	f1_list = []
 
-	while i < 300 :
+	while i < 30 :
+		kf = KFold(n_splits=10, shuffle=True)
 		i=i+1
-		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_g3, hbcd_deg_y_g3, test_size = 0.1)
-		forest = ensemble.RandomForestClassifier(n_estimators = 100)
-		forest_fit = forest.fit(train_X, train_y)
-		G3_valid_y_predicted = forest.predict(test_X)
-		cm1 = metrics.confusion_matrix(test_y, G3_valid_y_predicted)
-		G3_mcc=metrics.matthews_corrcoef(test_y, G3_valid_y_predicted)
-		G3_f1 = metrics.f1_score(test_y, G3_valid_y_predicted)
-		total1=sum(sum(cm1))
-		G3_accuracy=(cm1[0,0]+cm1[1,1])/total1
-		G3_specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
-		acc_list.append(G3_accuracy)
-		sp_list.append(G3_specificity)
-		mcc_list.append(G3_mcc)
-		f1_list.append(G3_f1)
+		for train_X_idx, test_X_idx in kf.split(hbcd_deg_X_g3):
+			forest = ensemble.RandomForestClassifier(n_estimators = 100)
+			forest_fit = forest.fit(hbcd_deg_X_g3[train_X_idx], hbcd_deg_y_g3[train_X_idx])
+			test_y=hbcd_deg_y_g3[test_X_idx]
+			G3_test_y_predicted = forest.predict(hbcd_deg_X_g3[test_X_idx])
+			cm1 = metrics.confusion_matrix(test_y, G3_test_y_predicted)
+			mcc=metrics.matthews_corrcoef(test_y, G3_test_y_predicted)
+			f1 = metrics.f1_score(test_y, G3_test_y_predicted)
+			total1=sum(sum(cm1))
+			accuracy=(cm1[0,0]+cm1[1,1])/total1
+			specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
+			acc_list.append(accuracy)
+			sp_list.append(specificity)
+			mcc_list.append(mcc)
+			f1_list.append(f1)
 	G3_RM_acc_mean = statistics.fmean(acc_list)
 	G3_RM_sp_mean = statistics.fmean(sp_list)
 	G3_RM_mcc_mean = statistics.fmean(mcc_list)
@@ -220,22 +228,24 @@ else:
 	mcc_list = []
 	f1_list = []
 
-	while i < 300 :
+	while i < 30 :
+		kf = KFold(n_splits=10, shuffle=True)
 		i=i+1
-		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_g4, hbcd_deg_y_g4, test_size = 0.1)
-		forest = ensemble.RandomForestClassifier(n_estimators = 100)
-		forest_fit = forest.fit(train_X, train_y)
-		G4_valid_y_predicted = forest.predict(test_X)
-		cm1 = metrics.confusion_matrix(test_y, G4_valid_y_predicted)
-		G4_mcc=metrics.matthews_corrcoef(test_y, G4_valid_y_predicted)
-		G4_f1 = metrics.f1_score(test_y, G4_valid_y_predicted)
-		total1=sum(sum(cm1))
-		G4_accuracy=(cm1[0,0]+cm1[1,1])/total1
-		G4_specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
-		acc_list.append(G4_accuracy)
-		sp_list.append(G4_specificity)
-		mcc_list.append(G4_mcc)
-		f1_list.append(G4_f1)
+		for train_X_idx, test_X_idx in kf.split(hbcd_deg_X_g4):
+			forest = ensemble.RandomForestClassifier(n_estimators = 100)
+			forest_fit = forest.fit(hbcd_deg_X_g4[train_X_idx], hbcd_deg_y_g4[train_X_idx])
+			test_y=hbcd_deg_y_g4[test_X_idx]
+			G4_test_y_predicted = forest.predict(hbcd_deg_X_g4[test_X_idx])
+			cm1 = metrics.confusion_matrix(test_y, G4_test_y_predicted)
+			mcc=metrics.matthews_corrcoef(test_y, G4_test_y_predicted)
+			f1 = metrics.f1_score(test_y, G4_test_y_predicted)
+			total1=sum(sum(cm1))
+			accuracy=(cm1[0,0]+cm1[1,1])/total1
+			specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
+			acc_list.append(accuracy)
+			sp_list.append(specificity)
+			mcc_list.append(mcc)
+			f1_list.append(f1)
 	G4_RM_acc_mean = statistics.fmean(acc_list)
 	G4_RM_sp_mean = statistics.fmean(sp_list)
 	G4_RM_mcc_mean = statistics.fmean(mcc_list)
@@ -248,22 +258,24 @@ else:
 	mcc_list = []
 	f1_list = []
 
-	while i < 300 :
+	while i < 30 :
+		kf = KFold(n_splits=10, shuffle=True)
 		i=i+1
-		train_X, test_X, train_y, test_y = train_test_split(hbcd_deg_X_g5, hbcd_deg_y_g5, test_size = 0.1)
-		forest = ensemble.RandomForestClassifier(n_estimators = 100)
-		forest_fit = forest.fit(train_X, train_y)
-		G5_valid_y_predicted = forest.predict(test_X)
-		cm1 = metrics.confusion_matrix(test_y, G5_valid_y_predicted)
-		G5_mcc=metrics.matthews_corrcoef(test_y, G5_valid_y_predicted)
-		G5_f1 = metrics.f1_score(test_y, G5_valid_y_predicted)
-		total1=sum(sum(cm1))
-		G5_accuracy=(cm1[0,0]+cm1[1,1])/total1
-		G5_specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
-		acc_list.append(G5_accuracy)
-		sp_list.append(G5_specificity)
-		mcc_list.append(G5_mcc)
-		f1_list.append(G5_f1)
+		for train_X_idx, test_X_idx in kf.split(hbcd_deg_X_g5):
+			forest = ensemble.RandomForestClassifier(n_estimators = 100)
+			forest_fit = forest.fit(hbcd_deg_X_g5[train_X_idx], hbcd_deg_y_g5[train_X_idx])
+			test_y=hbcd_deg_y_g5[test_X_idx]
+			G5_test_y_predicted = forest.predict(hbcd_deg_X_g5[test_X_idx])
+			cm1 = metrics.confusion_matrix(test_y, G5_test_y_predicted)
+			mcc=metrics.matthews_corrcoef(test_y, G5_test_y_predicted)
+			f1 = metrics.f1_score(test_y, G5_test_y_predicted)
+			total1=sum(sum(cm1))
+			accuracy=(cm1[0,0]+cm1[1,1])/total1
+			specificity = cm1[1,1]/(cm1[1,0]+cm1[1,1])
+			acc_list.append(accuracy)
+			sp_list.append(specificity)
+			mcc_list.append(mcc)
+			f1_list.append(f1)
 	G5_RM_acc_mean = statistics.fmean(acc_list)
 	G5_RM_sp_mean = statistics.fmean(sp_list)
 	G5_RM_mcc_mean = statistics.fmean(mcc_list)
